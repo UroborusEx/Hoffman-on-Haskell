@@ -24,7 +24,7 @@ tryRead = do
            (name:[]) <- getArgs
            line <- readFile name
            codelist <- return $ crtCodemap line
-           writeCodeMap $ M.toList codelist
+           putStrLn $ concat $writeCodeMap $ M.toList codelist
            putStrLn $ encode codelist line
            return ()
 
@@ -50,11 +50,10 @@ buildCodemap = M.fromList . buildCodelist
 encode :: Codemap -> String -> [Char]
 encode m = concat . map (m M.!)
   
-writeCodeMap :: [(Char,[Char])] -> IO ()
-writeCodeMap []= return ()
-writeCodeMap ((letter,code):xs)= do
-  putStrLn $ letter:' ':code
-  writeCodeMap xs
+writeCodeMap :: [(Char,[Char])] -> [[Char]]
+writeCodeMap []= []
+writeCodeMap ((letter,code):xs)= [letter]:" ":code:"\n":writeCodeMap xs
+  
 
 errorHandler :: IOException -> IO ()
 errorHandler e
